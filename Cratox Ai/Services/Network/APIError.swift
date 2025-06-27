@@ -1,16 +1,12 @@
-//
-//  APIError.swift
-//  Cratox Ai
-//
-//  Created by Dragos Ivanciuc on 24.06.2025.
-//
 import Foundation
 
 enum APIError: Error, LocalizedError {
     case invalidURL
     case invalidResponse
     case statusCode(Int)
+    case serverMessage(String)
     case decodingError(Error)
+    case unauthorized
     case unknown(Error)
 
     var errorDescription: String? {
@@ -21,8 +17,12 @@ enum APIError: Error, LocalizedError {
             return "The server response was invalid."
         case .statusCode(let code):
             return "Request failed with status code \(code)."
+        case .serverMessage(let message):
+            return message
         case .decodingError:
             return "Failed to decode the server response."
+        case .unauthorized:
+            return "You are not authorized. Please log in again."
         case .unknown(let error):
             return error.localizedDescription
         }

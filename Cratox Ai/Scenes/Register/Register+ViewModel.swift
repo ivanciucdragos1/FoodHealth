@@ -7,9 +7,11 @@ class RegisterViewModel: ObservableObject {
     @Published var confirmPassword: String = ""
 
     @Published var errorMessage: String = ""
-    @Published var isRegistered: Bool = false
+    @Published var navigateToHome: Bool = false
 
     @Published var emailError: String? = nil
+    @Published var firstName: String = ""
+    @Published var lastName: String = ""
     @Published var passwordError: String? = nil
     @Published var confirmPasswordError: String? = nil
     @Published var isRegisterEnabled: Bool = false
@@ -87,6 +89,33 @@ class RegisterViewModel: ObservableObject {
     }
     
     func register() {
+        let request = RegisterRequest(
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        )
         
+        Task {
+            do {
+                _ = try await AuthManager.shared.register(request: request)
+                DispatchQueue.main.async {
+                    self.navigateToHome = true
+                    self.errorMessage = ""
+                    
+                    self.email = ""
+                    self.password = ""
+                    self.confirmPassword = ""
+                    self.firstName = ""
+                    self.lastName = ""
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = error.localizedDescription
+                    self.navigateToHome = false
+                }
+            }
+        }
     }
 }
+

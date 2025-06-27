@@ -6,11 +6,13 @@ class LoginViewModel: ObservableObject {
     @Published var password: String = ""
 
     @Published var errorMessage: String = ""
-    @Published var isLoggedIn: Bool = false
+    @Published var navigateToHome: Bool = false
 
     @Published var emailError: String? = nil
     @Published var passwordError: String? = nil
     @Published var isLoginEnabled: Bool = false
+    
+    @Published var navigateToRegister = false
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -55,15 +57,29 @@ class LoginViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    func goToRegister() {
+            navigateToRegister = true
+    }
 
     func login() {
-        // Simulate successful login
-        if email == "test@example.com" && password == "Password1!" {
-            errorMessage = ""
-            isLoggedIn = true
-        } else {
-            errorMessage = "Invalid email or password."
-            isLoggedIn = false
+        let request = LoginRequest(email: email, password: password)
+        Task {
+            do {
+                _ = try await AuthManager.shared.login(request: request)
+                DispatchQueue.main.async {
+                    self.navigateToHome = true
+                    self.errorMessage = ""
+                    self.email = ""
+                    self.password = ""
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = error.localizedDescription
+                    self.navigateToHome = false
+                }
+            }
         }
     }
 }
+

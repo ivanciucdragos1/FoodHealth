@@ -3,6 +3,8 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var vm = LoginViewModel()
     @Environment(\.dismiss) private var dismiss
+    var onLoginSuccess: (() -> Void)? = nil
+    var onGoToRegister: (() -> Void)? = nil
     
     var body: some View {
         ScrollView {
@@ -21,7 +23,9 @@ struct LoginView: View {
                     TextInput(text: $vm.email,
                               label: "Email",
                               placeholder: "Enter your email",
-                              error: vm.emailError)
+                              error: vm.emailError
+                    ).autocapitalization(.none)
+                    
                     TextInput(text: $vm.password,
                               label: "Password",
                               placeholder: "Enter your password",
@@ -37,17 +41,27 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
                 
-                Button(action: {
-                    vm.login()
-                }) {
-                    Text("Log In")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(vm.isLoginEnabled ? Color.accentColor : Color.gray.opacity(0.4))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .disabled(!vm.isLoginEnabled)
+                AppButton(
+                    variant: vm.isLoginEnabled ? .primary : .disabled,
+                    color: AppColors.primaryGreen,
+                    font: Appfonts.h6Medium,
+                    title: "Log In",
+                    action: {
+                        vm.login()
+                        if vm.navigateToHome {
+                            onLoginSuccess?()
+                        }
+                    }
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                
+                GoogleButton(
+                    font: Appfonts.h6Medium,
+                    color: AppColors.grayscale20,
+                    action: {},
+                    width: nil
+                )
                 .padding(.horizontal)
                 
                 HStack {
@@ -56,19 +70,18 @@ struct LoginView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Button("Sign Up") {
-                        dismiss()
+                        onGoToRegister?()
                     }
                     .font(.subheadline.bold())
+                    .foregroundStyle(AppColors.primaryGreen)
                 }
                 .padding(.horizontal)
             }
             .padding(.top)
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .onChange(of: vm.isLoggedIn) { _, loggedIn in
-            if loggedIn {
-                dismiss()
-            }
+        .navigationDestination(isPresented: $vm.navigateToRegister) {
+            RegisterView()
         }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
-struct AnalyzedMeal: Identifiable, Codable {
-    let id: String
+struct AnalyzedMeal: Identifiable, Codable, Hashable {
+    let id: UUID
     let itemName: String
     let calories: Int
     let protein: String
@@ -20,3 +20,5 @@ struct HistoryResponse: Codable {
     let analyses: [AnalyzedMeal]
     let count: Int
 }
+
+struct EmptyResponse: Decodable {}

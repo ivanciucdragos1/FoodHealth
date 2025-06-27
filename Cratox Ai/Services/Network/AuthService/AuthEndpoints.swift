@@ -1,14 +1,7 @@
-//
-//  AuthEndpoints.swift
-//  Cratox Ai
-//
-//  Created by Dragos Ivanciuc on 24.06.2025.
-//
-
 import Foundation
 
 enum AuthEndpoints {
-    static let baseURL = "http://localhost:5051"
+    static let baseURL = AppEnvironment.authAPIBaseURL
 
     static func login(_ body: LoginRequest) throws -> URLRequest {
         try makeRequest(path: "/login", method: "POST", body: body)

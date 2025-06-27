@@ -25,7 +25,7 @@ struct Cratox_AiApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashscreenView()
         }
         .modelContainer(sharedModelContainer)
     }

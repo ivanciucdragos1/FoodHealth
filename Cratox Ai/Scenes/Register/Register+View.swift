@@ -21,12 +21,23 @@ struct RegisterView: View {
                     TextInput(text: $vm.email,
                               label: "Email",
                               placeholder: "Enter your email",
-                              error: vm.emailError)
+                              error: vm.emailError
+                    ).autocapitalization(.none)
+            
+                    TextInput(text: $vm.firstName,
+                                  label: "First Name",
+                                  placeholder: "Enter your first name")
+                    
+                    TextInput(text: $vm.lastName,
+                                  label: "Last Name",
+                                  placeholder: "Enter your last name")
+                    
                     TextInput(text: $vm.password,
                               label: "Password",
                               placeholder: "Create a password",
                               isSecureField: true,
                               error: vm.passwordError)
+                    
                     TextInput(text: $vm.confirmPassword,
                               label: "Confirm Password",
                               placeholder: "Re-enter your password",
@@ -42,17 +53,24 @@ struct RegisterView: View {
                 }
                 .padding(.horizontal)
                 
-                Button(action: {
-                    vm.register()
-                }) {
-                    Text("Register")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(vm.isRegisterEnabled ? Color.accentColor : Color.gray.opacity(0.4))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .disabled(!vm.isRegisterEnabled)
+                AppButton(
+                    variant: vm.isRegisterEnabled ? .primary : .disabled,
+                    color: AppColors.primaryGreen,
+                    font: Appfonts.h6Medium,
+                    title: "Register",
+                    action: {
+                        vm.register()
+                    }
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                
+                GoogleButton(
+                    font: Appfonts.h6Medium,
+                    color: AppColors.grayscale20,
+                    action: {},
+                    width: nil
+                )
                 .padding(.horizontal)
                 
                 HStack {
@@ -64,16 +82,15 @@ struct RegisterView: View {
                         dismiss()
                     }
                     .font(.subheadline.bold())
+                    .foregroundStyle(AppColors.primaryGreen)
                 }
                 .padding(.horizontal)
             }
             .padding(.top)
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .onChange(of: vm.isRegistered) { _, registered in
-            if registered {
-                dismiss()
-            }
+        .navigationDestination(isPresented: $vm.navigateToHome) {
+            HomePageView()
         }
     }
 }

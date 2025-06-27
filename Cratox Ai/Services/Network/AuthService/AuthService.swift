@@ -1,14 +1,9 @@
-//
-//  AuthService.swift
-//  Cratox Ai
-//
-//  Created by Dragos Ivanciuc on 24.06.2025.
-//
 import Foundation
 
 final class AuthService {
     static let shared = AuthService()
     private init() {}
+    
 
     func login(request: LoginRequest) async throws -> LoginResponse {
         let urlRequest = try AuthEndpoints.login(request)

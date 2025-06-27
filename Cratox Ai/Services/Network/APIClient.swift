@@ -1,9 +1,3 @@
-//
-//  APIClient.swift
-//  Cratox Ai
-//
-//  Created by Dragos Ivanciuc on 24.06.2025.
-//
 import Foundation
 
 final class APIClient {
@@ -17,15 +11,53 @@ final class APIClient {
             throw APIError.invalidResponse
         }
 
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.statusCode(httpResponse.statusCode)
+        print("HTTP Status Code: \(httpResponse.statusCode)")
+
+        if let json = String(data: data, encoding: .utf8) {
+            print("Server response body: \(json)")
         }
 
-        do {
-            let decoded = try JSONDecoder().decode(T.self, from: data)
-            return decoded
-        } catch {
-            throw APIError.decodingError(error)
+        if (200...299).contains(httpResponse.statusCode) {
+            do {
+                let decoded = try JSONDecoder().decode(T.self, from: data)
+                return decoded
+            } catch {
+                throw APIError.decodingError(error)
+            }
+        } else {
+            if let serverError = try? JSONDecoder().decode(ServerErrorResponse.self, from: data) {
+                throw APIError.serverMessage(serverError.displayMessage)
+            }
+            throw APIError.statusCode(httpResponse.statusCode)
         }
+    }
+    
+    func upload<T: Decodable>(_ request: URLRequest) async throws -> T {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        if (200...299).contains(httpResponse.statusCode) {
+            do {
+                let decoded = try JSONDecoder().decode(T.self, from: data)
+                return decoded
+            } catch {
+                throw APIError.decodingError(error)
+            }
+        } else {
+            if let serverError = try? JSONDecoder().decode(ServerErrorResponse.self, from: data) {
+                throw APIError.serverMessage(serverError.displayMessage)
+            }
+            throw APIError.statusCode(httpResponse.statusCode)
+        }
+    }
+}
+
+struct ServerErrorResponse: Decodable {
+    let message: String?
+    let error: String?
+
+    var displayMessage: String {
+        message ?? error ?? "An unknown server error occurred."
     }
 }
