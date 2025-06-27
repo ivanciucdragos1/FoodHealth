@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>FOOD_API_URL_SIMULATOR</key>
+    <string>$(FOOD_API_URL_SIMULATOR)</string>
+    <key>FOOD_API_URL_DEVICE</key>
+    <string>$(FOOD_API_URL_DEVICE)</string>
+    <key>AUTH_API_URL_SIMULATOR</key>
+    <string>$(AUTH_API_URL_SIMULATOR)</string>
+    <key>AUTH_API_URL_DEVICE</key>
+    <string>$(AUTH_API_URL_DEVICE)</string>
+    
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app uses your photo library to upload meal images.</string>
+
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app needs local network access to connect to the backend.</string>
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+</dict>
+</plist>
